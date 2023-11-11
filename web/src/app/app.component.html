@@ -1,0 +1,52 @@
+<div class="main-container">
+
+  <h1 class="basic-blog-title">BASIC BLOG</h1>
+
+  <div class="main-wrapper">
+
+    <form [formGroup]="newPostForm" #formDirective="ngForm">
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input matInput placeholder="Ex. Scss" formControlName="title" required>
+        <mat-error *ngIf="newPostForm.get('title')?.invalid">Title is required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Author</mat-label>
+        <input matInput placeholder="Ex. Eliu B." formControlName="author" required>
+        <mat-error *ngIf="newPostForm.get('author')?.invalid">Author is required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Leave your post</mat-label>
+        <textarea matInput placeholder="Ex. It can help you to..." formControlName="body" required></textarea>
+        <mat-error *ngIf="newPostForm.get('body')?.invalid">Minimum 100 characters required</mat-error>
+      </mat-form-field>
+      <mat-progress-bar mode="query" *ngIf="isCreatingNewPost"></mat-progress-bar>
+      <button mat-flat-button color="primary" (click)="createNewPost(formDirective)" *ngIf="!isCreatingNewPost">Post it!</button>
+
+    </form>
+
+    <mat-progress-bar mode="query" *ngIf="isLoading"></mat-progress-bar>
+
+    <div *ngIf="!isLoading" class="posts-container">
+      <mat-divider></mat-divider>
+      <mat-form-field appearance="outline" class="search-post">
+        <mat-label class="search-label"><mat-icon fontIcon="search" class="search-icon"></mat-icon>Post</mat-label>
+        <input matInput placeholder="Search by title, author or description." [(ngModel)]="searchPost">
+        <button *ngIf="searchPost.length" matSuffix mat-icon-button (click)="searchPost=''">
+          <mat-icon fontIcon="close"></mat-icon>
+        </button>
+      </mat-form-field>
+      <div class="post-container" *ngFor="let post of posts | postFilter: searchPost"
+        (click)="selectPost(post.data.id)">
+        <div class="post-header-container">
+          <h1>{{post.data.title}}</h1>
+          <h6>{{post.data.created_at | date:'medium'}}</h6>
+        </div>
+        <p *ngIf="!post.isSelected" class="body">{{post.data.body}}<span>...<span class="read-more">Read
+              more</span></span></p>
+        <p *ngIf="post.isSelected" class="body">{{post.data.body}}</p>
+        <p class="author">{{post.data.author}}</p>
+      </div>
+    </div>
+  </div>
+</div>
